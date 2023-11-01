@@ -92,6 +92,12 @@ namespace TicTacToeMinMax
                         continue;
                     board[i, j] = mover;
                     numMoves++;
+                    if (Winner() == mover)
+                    {
+                        board[i, j] = Piece.Empty;
+                        numMoves--;
+                        return mover;
+                    }
                     Piece evaluation = evaluateBoard((Piece)(-(int)mover));
                     board[i, j] = Piece.Empty;
                     numMoves--;
@@ -129,9 +135,20 @@ namespace TicTacToeMinMax
             }
             while(ticTacToeBoard.numMoves < 9)
             {
-                if (ticTacToeBoard.numMoves == 0 && myPiece == Piece.Cross)
+                if (ticTacToeBoard.turn == myPiece)
                 {
-
+                    Piece bestSoFar = (Piece)(-(int)myPiece);
+                    for (int i = 0; i < TicTacToeBoard.Rows; i++)
+                    {
+                        for (int j = 0; j < TicTacToeBoard.Rows; j++)
+                        {
+                            if (ticTacToeBoard.board[i, j] != Piece.Empty)
+                                continue;
+                            ticTacToeBoard.board[i, j] = myPiece;
+                            ticTacToeBoard.numMoves++;
+                            Piece evaluation = ticTacToeBoard.evaluateBoard((Piece)(-(int)myPiece));
+                        }
+                    }
                 }
             }
         }
