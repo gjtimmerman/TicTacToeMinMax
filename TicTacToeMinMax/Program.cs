@@ -184,9 +184,6 @@ namespace TicTacToeMinMax
                             ticTacToeBoard.numMoves++;
                             if (ticTacToeBoard.Winner() == myPiece)
                             {
-//                                Console.WriteLine("I win!!");
-//                                Console.WriteLine($"My move is: {(char)(i + 'a')}, {j}");
-//                                ticTacToeBoard.Print();
                                 goto loopend;
                             }
                             Piece evaluation = ticTacToeBoard.evaluateBoard((Piece)(-(int)myPiece));
