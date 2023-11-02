@@ -15,6 +15,23 @@ namespace TicTacToeMinMax
         public int numMoves;
         public Piece[,] board = new Piece[Rows, Rows];
         public Piece turn = Piece.Cross;
+        public void Print()
+        {
+            Console.Write("  ");
+            for (int j = 0; j < Rows; j++)
+                Console.Write($" {j} ");
+            Console.WriteLine();
+            for (int i = 0; i < Rows; i++)
+            {
+                Console.Write($"{i} ");
+                for (int j = 0; j < Rows; j++)
+                {
+                    Console.Write(board[i, j] == Piece.Cross ? " x " : (board[i,j] == Piece.Circle ? " O " : "   "));
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+        }
         public Piece Winner()
         {
             for (int i = 0; i < Rows; i++)
@@ -120,6 +137,7 @@ namespace TicTacToeMinMax
         {
             Piece myPiece = Piece.Empty;
             TicTacToeBoard ticTacToeBoard = new TicTacToeBoard();
+            ticTacToeBoard.Print();
             Console.WriteLine("Hello, Player!");
             Console.WriteLine("Do you want to make the first move (Y/N)?");
             String ?answer = Console.ReadLine();
@@ -133,7 +151,7 @@ namespace TicTacToeMinMax
             {
                 myPiece = Piece.Cross;
             }
-            while(ticTacToeBoard.numMoves < 9)
+            while(ticTacToeBoard.numMoves < 9 && ticTacToeBoard.Winner() == Piece.Empty)
             {
                 if (ticTacToeBoard.turn == myPiece)
                 {
@@ -151,27 +169,48 @@ namespace TicTacToeMinMax
                             if (ticTacToeBoard.Winner() == myPiece)
                             {
                                 Console.WriteLine("I win!!");
+                                Console.WriteLine($"My move is: {i}, {j}");
+                                ticTacToeBoard.Print();
                                 return;
                             }
                             Piece evaluation = ticTacToeBoard.evaluateBoard((Piece)(-(int)myPiece));
-                            if (evaluation == Piece.Empty && evaluation != bestSoFar)
+                            if ((evaluation == Piece.Empty && evaluation != bestSoFar))
                             {
                                 bestSoFar = evaluation;
                                 bestSoFarX = i;
                                 bestSoFarY = j;
                             }
+                            else if (evaluation == myPiece)
+                            {
+                                Console.WriteLine("I claim victory");
+                                bestSoFar = evaluation;
+                                bestSoFarX = i;
+                                bestSoFarY = j;
+                                goto loopend;
+
+                            }
                             ticTacToeBoard.board[i,j] = Piece.Empty;
                             ticTacToeBoard.numMoves--;
                         }
                     }
+                    loopend: 
+                    Console.WriteLine($"My move: {bestSoFarX}, {bestSoFarY}");
+                    ticTacToeBoard.board[bestSoFarX, bestSoFarY] = myPiece;
+                    ticTacToeBoard.numMoves++;
                     if (bestSoFar == (Piece)(-(int)myPiece))
+                    {
+                        ticTacToeBoard.Print();
                         Console.WriteLine("I resign!");
+                        break;
+                    }
+
                     else
                     {
-                        Console.WriteLine($"My move: {bestSoFarX}, {bestSoFarY}");
-                        ticTacToeBoard.board[bestSoFarX, bestSoFarY] = myPiece;
-                        ticTacToeBoard.numMoves++;
                         ticTacToeBoard.turn = (Piece)(-(int)ticTacToeBoard.turn);
+                    }
+                    if (ticTacToeBoard.Winner() == myPiece)
+                    {
+                        Console.WriteLine("I win.");
                     }
                 }
                 else
@@ -198,8 +237,14 @@ namespace TicTacToeMinMax
                     ticTacToeBoard.board[xMove,yMove] = (Piece)(-(int)myPiece);
                     ticTacToeBoard.numMoves++;
                     ticTacToeBoard.turn = (Piece)(-(int)ticTacToeBoard.turn);
+                    if (ticTacToeBoard.Winner() == (Piece)(-(int)myPiece))
+                    {
+                        Console.WriteLine("You won, congratulations!");
+                        break;
+                    }
 
                 }
+                ticTacToeBoard.Print();
             }
         }
     }
