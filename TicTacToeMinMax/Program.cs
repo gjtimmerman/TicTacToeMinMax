@@ -160,12 +160,19 @@ namespace TicTacToeMinMax
                                 bestSoFarX = i;
                                 bestSoFarY = j;
                             }
+                            ticTacToeBoard.board[i,j] = Piece.Empty;
+                            ticTacToeBoard.numMoves--;
                         }
                     }
                     if (bestSoFar == (Piece)(-(int)myPiece))
                         Console.WriteLine("I resign!");
                     else
+                    {
                         Console.WriteLine($"My move: {bestSoFarX}, {bestSoFarY}");
+                        ticTacToeBoard.board[bestSoFarX, bestSoFarY] = myPiece;
+                        ticTacToeBoard.numMoves++;
+                        ticTacToeBoard.turn = (Piece)(-(int)ticTacToeBoard.turn);
+                    }
                 }
                 else
                 {
@@ -174,6 +181,24 @@ namespace TicTacToeMinMax
                     string Xstr = Console.ReadLine();
                     Console.WriteLine("Give me the y coordinate:");
                     string Ystr = Console.ReadLine();
+                    int xMove = int.Parse(Xstr);
+                    int yMove = int.Parse(Ystr);
+                    while (ticTacToeBoard.board[xMove,yMove] != Piece.Empty)
+                    {
+                        Console.WriteLine("This space on the board is already occupied");
+                        Console.WriteLine("Please enter a new move");
+                        Console.WriteLine("Give me the x coordinate:");
+                        Xstr = Console.ReadLine();
+                        Console.WriteLine("Give me the y coordinate:");
+                        Ystr = Console.ReadLine();
+                        xMove = int.Parse(Xstr);
+                        yMove = int.Parse(Ystr);
+
+                    }
+                    ticTacToeBoard.board[xMove,yMove] = (Piece)(-(int)myPiece);
+                    ticTacToeBoard.numMoves++;
+                    ticTacToeBoard.turn = (Piece)(-(int)ticTacToeBoard.turn);
+
                 }
             }
         }
