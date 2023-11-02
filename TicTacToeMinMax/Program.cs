@@ -17,18 +17,27 @@ namespace TicTacToeMinMax
         public Piece turn = Piece.Cross;
         public void Print()
         {
-            Console.Write("  ");
-            for (int j = 0; j < Rows; j++)
-                Console.Write($" {j} ");
-            Console.WriteLine();
-            for (int i = 0; i < Rows; i++)
+            void PrintHeader()
             {
-                Console.Write($"{i} ");
+                Console.Write("  ");
+                for (int j = 0; j < Rows; j++)
+                    Console.Write($" {j} ");
+                Console.WriteLine();
+            }
+            void PrintRow(int i)
+            {
+                Console.Write($"{(char)(i + 'a')} ");
                 for (int j = 0; j < Rows; j++)
                 {
-                    Console.Write(board[i, j] == Piece.Cross ? " x " : (board[i,j] == Piece.Circle ? " O " : "   "));
+                    Console.Write(board[i, j] == Piece.Cross ? " x " : (board[i, j] == Piece.Circle ? " O " : "   "));
                 }
                 Console.WriteLine();
+
+            }
+            PrintHeader();
+            for (int i = 0; i < Rows; i++)
+            {
+                PrintRow(i);
             }
             Console.WriteLine();
         }
@@ -98,8 +107,15 @@ namespace TicTacToeMinMax
         }
         public Piece evaluateBoard(Piece mover)
         {
-            if (numMoves == Rows * Rows)
-                return Winner();
+            Piece winner = Winner();
+            if (winner == Piece.Empty)
+            {
+                if (numMoves == Rows * Rows)
+                    return winner;
+            }
+            else
+                return winner;
+
             Piece bestSoFar = (Piece)(-(int)mover);
             for (int i = 0; i < Rows; i++)
             {
@@ -168,13 +184,13 @@ namespace TicTacToeMinMax
                             ticTacToeBoard.numMoves++;
                             if (ticTacToeBoard.Winner() == myPiece)
                             {
-                                Console.WriteLine("I win!!");
-                                Console.WriteLine($"My move is: {i}, {j}");
-                                ticTacToeBoard.Print();
-                                return;
+//                                Console.WriteLine("I win!!");
+//                                Console.WriteLine($"My move is: {(char)(i + 'a')}, {j}");
+//                                ticTacToeBoard.Print();
+                                goto loopend;
                             }
                             Piece evaluation = ticTacToeBoard.evaluateBoard((Piece)(-(int)myPiece));
-                            if ((evaluation == Piece.Empty && evaluation != bestSoFar))
+                            if ((bestSoFarX == -1) || (evaluation == Piece.Empty && evaluation != bestSoFar))
                             {
                                 bestSoFar = evaluation;
                                 bestSoFarX = i;
@@ -194,12 +210,11 @@ namespace TicTacToeMinMax
                         }
                     }
                     loopend: 
-                    Console.WriteLine($"My move: {bestSoFarX}, {bestSoFarY}");
+                    Console.WriteLine($"My move: {(char)(bestSoFarX + 'a')}, {bestSoFarY}");
                     ticTacToeBoard.board[bestSoFarX, bestSoFarY] = myPiece;
                     ticTacToeBoard.numMoves++;
                     if (bestSoFar == (Piece)(-(int)myPiece))
                     {
-                        ticTacToeBoard.Print();
                         Console.WriteLine("I resign!");
                         break;
                     }
@@ -216,21 +231,21 @@ namespace TicTacToeMinMax
                 else
                 {
                     Console.WriteLine("Your turn:");
-                    Console.WriteLine("Give me the x coordinate:");
+                    Console.WriteLine("Give me the x coordinate (a, b, c):");
                     string Xstr = Console.ReadLine();
-                    Console.WriteLine("Give me the y coordinate:");
+                    Console.WriteLine("Give me the y coordinate (0, 1, 2):");
                     string Ystr = Console.ReadLine();
-                    int xMove = int.Parse(Xstr);
+                    int xMove = Xstr.Trim()[0] - 'a';
                     int yMove = int.Parse(Ystr);
                     while (ticTacToeBoard.board[xMove,yMove] != Piece.Empty)
                     {
                         Console.WriteLine("This space on the board is already occupied");
                         Console.WriteLine("Please enter a new move");
-                        Console.WriteLine("Give me the x coordinate:");
+                        Console.WriteLine("Give me the x coordinate (a, b, c):");
                         Xstr = Console.ReadLine();
-                        Console.WriteLine("Give me the y coordinate:");
+                        Console.WriteLine("Give me the y coordinate (0, 1, 2):");
                         Ystr = Console.ReadLine();
-                        xMove = int.Parse(Xstr);
+                        xMove = Xstr.Trim()[0] - 'a';
                         yMove = int.Parse(Ystr);
 
                     }
@@ -245,6 +260,10 @@ namespace TicTacToeMinMax
 
                 }
                 ticTacToeBoard.Print();
+            }
+            if (ticTacToeBoard.Winner() == Piece.Empty)
+            {
+                Console.WriteLine("It is a draw!");
             }
         }
     }
