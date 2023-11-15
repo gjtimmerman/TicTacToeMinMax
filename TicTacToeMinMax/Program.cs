@@ -143,7 +143,9 @@ namespace TicTacToeMinMax
                     }
                     if (evaluation == bestSoFar)
                     {
-                        if ( evaluation == mover && numMovesForEval < numMovesForBestEval)
+                        if (evaluation == mover && numMovesForEval < numMovesForBestEval)
+                            numMovesForBestEval = numMovesForEval;
+                        else if (evaluation == (Piece)(-(int)mover) && numMovesForEval > numMovesForBestEval)
                             numMovesForBestEval = numMovesForEval;
                     }
                     else if (mover == Piece.Cross &&  evaluation < bestSoFar || mover == Piece.Circle && evaluation > bestSoFar)
@@ -153,7 +155,6 @@ namespace TicTacToeMinMax
                     }
                 }
             }
-            Console.WriteLine($"At move {numMoves} best so far for {mover} is {bestSoFar} in {numMovesForBestEval} moves");
             return (bestSoFar, numMovesForBestEval);
         }
     }
@@ -177,7 +178,7 @@ namespace TicTacToeMinMax
             {
                 myPiece = Piece.Cross;
             }
-            while (ticTacToeBoard.numMoves < 9 && ticTacToeBoard.Winner() == Piece.Empty)
+            while (ticTacToeBoard.numMoves < TicTacToeBoard.Rows * TicTacToeBoard.Rows && ticTacToeBoard.Winner() == Piece.Empty)
             {
                 if (ticTacToeBoard.turn == myPiece)
                 {
@@ -219,6 +220,15 @@ namespace TicTacToeMinMax
                                     numMovesForBestEval = numMovesForEval;
                                 }
 
+                            }
+                            else if (evaluation == bestSoFar && evaluation == (Piece)(-(int)myPiece))
+                            {
+                                if (numMovesForEval > numMovesForBestEval)
+                                {
+                                    bestSoFarX = i;
+                                    bestSoFarY = j;
+                                    numMovesForBestEval = numMovesForEval;
+                                }
                             }
                             else if (myPiece == Piece.Cross && evaluation < bestSoFar || myPiece == Piece.Circle && evaluation > bestSoFar)
                             {
