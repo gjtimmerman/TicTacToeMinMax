@@ -188,14 +188,6 @@ namespace TicTacToeMinMax
                                 continue;
                             ticTacToeBoard.board[i, j] = myPiece;
                             ticTacToeBoard.numMoves++;
-                            if (ticTacToeBoard.Winner() == myPiece)
-                            {
-                                bestSoFar = myPiece;
-                                bestSoFarX = i;
-                                bestSoFarY = j;
-                                numMovesForBestEval = 1;
-                                goto loopend;
-                            }
                             (Piece evaluation, int numMovesForEval) = ticTacToeBoard.evaluateBoard((Piece)(-(int)myPiece));
                             numMovesForEval++;
                             if (bestSoFarX == -1)
@@ -235,7 +227,6 @@ namespace TicTacToeMinMax
                             ticTacToeBoard.numMoves--;
                         }
                     }
-                    loopend: 
                     if (bestSoFar == (Piece)(-(int)myPiece))
                     {
                         Console.WriteLine("I resign!");
