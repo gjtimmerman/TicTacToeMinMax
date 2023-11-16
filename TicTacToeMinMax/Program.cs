@@ -47,7 +47,7 @@ namespace TicTacToeMinMax
             {
                 Piece first = board[i,0];
                 if (first == Piece.Empty)
-                    break;
+                    continue;
                 bool hasWinner = true;
                 for (int j = 1; j < Rows; j++)
                 {
@@ -64,7 +64,7 @@ namespace TicTacToeMinMax
             {
                 Piece first = board[0, i];
                 if (first == Piece.Empty)
-                    break;
+                    continue;
                 bool hasWinner = true;
                 for (int j = 1;j < Rows; j++)
                 {
@@ -125,12 +125,6 @@ namespace TicTacToeMinMax
                         continue;
                     board[i, j] = mover;
                     numMoves++;
-                    if (Winner() == mover)
-                    {
-                        board[i, j] = Piece.Empty;
-                        numMoves--;
-                        return (mover, 1);
-                    }
                     (Piece evaluation, int numMovesForEval) = evaluateBoard((Piece)(-(int)mover));
                     board[i, j] = Piece.Empty;
                     numMoves--;
