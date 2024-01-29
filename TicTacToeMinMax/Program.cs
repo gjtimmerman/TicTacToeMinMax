@@ -106,7 +106,7 @@ namespace TicTacToeMinMax
                 return Piece.Empty;
             
         }
-        public (Piece, int) evaluateBoard(Piece mover, Piece alfa, Piece beta)
+        public (Piece, int, int, int) evaluateBoard(Piece mover, Piece alfa, Piece beta)
         {
             Piece winner = Winner();
             if (winner == Piece.Empty)
@@ -114,15 +114,17 @@ namespace TicTacToeMinMax
                 if (numMoves == Rows * Rows)
                 {
                     numberOfBoardEvaluations++;
-                    return (winner, 0);
+                    return (winner, 0, 0, 0);
                 }
             }
             else
             {
                 numberOfBoardEvaluations++;
-                return (winner, 0);
+                return (winner, 0, 0 ,0);
             }
             int numMovesForBestEval = -1;
+            int bestSoFarX = -1;
+            int bestSoFarY = -1;
             Piece bestSoFar = (Piece)(-(int)mover);
             for (int i = 0; i < Rows; i++)
             {
@@ -132,7 +134,7 @@ namespace TicTacToeMinMax
                         continue;
                     board[i, j] = mover;
                     numMoves++;
-                    (Piece evaluation, int numMovesForEval) = evaluateBoard((Piece)(-(int)mover), alfa, beta);
+                    (Piece evaluation, int numMovesForEval, int bestSoFarXCalculated, int bestSoFarYCalculated) = evaluateBoard((Piece)(-(int)mover), alfa, beta);
                     board[i, j] = Piece.Empty;
                     numMoves--;
                     if (turn == mover)
@@ -141,17 +143,29 @@ namespace TicTacToeMinMax
                     {
                         numMovesForBestEval = numMovesForEval;
                         bestSoFar = evaluation;
+                        bestSoFarX = i;
+                        bestSoFarY = j;
                     }
                     if (evaluation == bestSoFar)
                     {
                         if (evaluation == mover && numMovesForEval < numMovesForBestEval)
+                        {
                             numMovesForBestEval = numMovesForEval;
+                            bestSoFarX = i;
+                            bestSoFarY = j;
+                        }
                         else if (evaluation == (Piece)(-(int)mover) && numMovesForEval > numMovesForBestEval)
+                        {
                             numMovesForBestEval = numMovesForEval;
+                            bestSoFarX = i;
+                            bestSoFarY = j;
+                        }
                     }
                     else if (mover == Piece.Cross &&  evaluation < bestSoFar || mover == Piece.Circle && evaluation > bestSoFar)
                     {
                         bestSoFar = evaluation;
+                        bestSoFarX = i;
+                        bestSoFarY = j;
                         numMovesForBestEval = numMovesForEval;
                     }
                     if (mover == Piece.Cross && bestSoFar < alfa || mover == Piece.Circle && bestSoFar > beta)
@@ -164,7 +178,7 @@ namespace TicTacToeMinMax
             }
             loopend:
             numberOfBoardEvaluations++;
-            return (bestSoFar, numMovesForBestEval);
+            return (bestSoFar, numMovesForBestEval, bestSoFarX, bestSoFarY);
         }
     }
     internal class Program
@@ -192,57 +206,7 @@ namespace TicTacToeMinMax
                 if (ticTacToeBoard.turn == myPiece)
                 {
                     ticTacToeBoard.numberOfBoardEvaluations = 0;
-                    Piece bestSoFar = (Piece)(-(int)myPiece);
-                    int bestSoFarX = -1;
-                    int bestSoFarY = -1;
-                    int numMovesForBestEval = TicTacToeBoard.Rows * TicTacToeBoard.Rows + 1;
-                    for (int i = 0; i < TicTacToeBoard.Rows; i++)
-                    {
-                        for (int j = 0; j < TicTacToeBoard.Rows; j++)
-                        {
-                            if (ticTacToeBoard.board[i, j] != Piece.Empty)
-                                continue;
-                            ticTacToeBoard.board[i, j] = myPiece;
-                            ticTacToeBoard.numMoves++;
-                            (Piece evaluation, int numMovesForEval) = ticTacToeBoard.evaluateBoard((Piece)(-(int)myPiece), Piece.Cross, Piece.Circle);
-                            numMovesForEval++;
-                            if (bestSoFarX == -1)
-                            {
-                                bestSoFar = evaluation;
-                                bestSoFarX = i;
-                                bestSoFarY = j;
-                                numMovesForBestEval = numMovesForEval;
-                            }
-                            if (evaluation == bestSoFar && evaluation == myPiece)
-                            {
-                                if (numMovesForEval < numMovesForBestEval)
-                                {
-                                    bestSoFarX = i;
-                                    bestSoFarY = j;
-                                    numMovesForBestEval = numMovesForEval;
-                                }
-
-                            }
-                            else if (evaluation == bestSoFar && evaluation == (Piece)(-(int)myPiece))
-                            {
-                                if (numMovesForEval > numMovesForBestEval)
-                                {
-                                    bestSoFarX = i;
-                                    bestSoFarY = j;
-                                    numMovesForBestEval = numMovesForEval;
-                                }
-                            }
-                            else if (myPiece == Piece.Cross && evaluation < bestSoFar || myPiece == Piece.Circle && evaluation > bestSoFar)
-                            {
-                                bestSoFar = evaluation;
-                                bestSoFarX = i;
-                                bestSoFarY = j;
-                                numMovesForBestEval = numMovesForEval;
-                            }
-                            ticTacToeBoard.board[i,j] = Piece.Empty;
-                            ticTacToeBoard.numMoves--;
-                        }
-                    }
+                    (Piece bestSoFar, int numMovesForBestEval, int bestSoFarX, int bestSoFarY) = ticTacToeBoard.evaluateBoard(myPiece, Piece.Cross, Piece.Circle);
                     if (bestSoFar == (Piece)(-(int)myPiece))
                     {
                         Console.WriteLine("I resign!");
